@@ -1,2 +1,6 @@
 /* eslint-disable no-console */
-console.log(10);
+export default () => {
+  console.log('1 + 2');
+  return true;
+};
+console.log(1 + 2);
