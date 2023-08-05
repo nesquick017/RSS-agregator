@@ -16,7 +16,7 @@ steps:
     run: make lint
 
   - name: testing
-    run: make test
+    run: npx jest
 
   - name: Test & publish code coverage
     # Publish code coverage on Code Climate
