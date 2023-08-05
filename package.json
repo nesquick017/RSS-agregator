@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "rss feed collector",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "start": "webpack serve",
-    "build dev": "webpack",
-    "build prod": "webpack --node_env=production",
+    "build-dev": "webpack",
+    "build-prod": "webpack --node-env=production",
     "clear": "rd /s /q dist"
   },
   "author": "",
