@@ -1,7 +1,7 @@
 publish:
 	npm publish --dry-runs
 install:
-	npm ci
+	npm install
 lint:
 	npx eslint .
 test:
