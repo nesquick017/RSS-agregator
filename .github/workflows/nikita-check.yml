@@ -10,7 +10,7 @@ steps:
       node-version: ${{ matrix.node-version }}
       cache: 'npm'
   - name: Install dependencies
-    run: npm c
+    run: npm ci
 
   - name: linting
     run: make lint
