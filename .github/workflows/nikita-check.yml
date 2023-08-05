@@ -1,4 +1,4 @@
-name: project-check
+name: nikita's-check
 on: push
 jobs:
   lint-job:
