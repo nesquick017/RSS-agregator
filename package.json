@@ -4,11 +4,22 @@
   "description": "rss feed collector",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "webpack serve",
+    "build dev": "webpack",
+    "build prod": "webpack --node_env=production",
+    "clear": "rd /s /q dist"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.46.0"
+    "eslint": "^8.46.0",
+    "jest": "^29.6.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
