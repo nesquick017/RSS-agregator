@@ -1,2 +1,1 @@
-/* eslint-disable no-console */
-console.log(10);
+(()=>{"use strict";console.log(3)})();
