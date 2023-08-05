@@ -9,7 +9,7 @@
     "start": "webpack serve",
     "build-dev": "webpack",
     "build-prod": "webpack --node-env=production",
-    "clear": "rd /s /q dist"
+    "clear": "rm -r dist"
   },
   "author": "Madorskii Nikita",
   "license": "ISC",
