@@ -1,37 +1,34 @@
-name: Nikita's workflow
-
-on:
-  push:
-    branches:
-      - main
-
+name: project-check
+on: push
 jobs:
-  build:
+  lint-job:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [18.x]
 
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-
+          cache: 'npm'
       - name: Install dependencies
-        run: make install
+        run: npm ci
 
-      - name: Run linting
+      - name: linting
         run: make lint
 
-      - name: Run tests
-        run: npx jest
+      - name: testing
+        run: make test
 
       - name: Test & publish code coverage
+        # Publish code coverage on Code Climate
+        # https://github.com/paambaati/codeclimate-action
         uses: paambaati/codeclimate-action@v4.0.0
+        # Add Code Climate secret key
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
