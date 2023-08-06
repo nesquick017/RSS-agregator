@@ -1,7 +1,5 @@
 import './index.html';
 import './index.css';
+import app from './addLink.js';
 
-const mult = (a, b) => a * b;
-
-console.log(mult(5, 6));
-console.log(mult(4, 6));
+app();

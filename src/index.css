@@ -1,3 +1,20 @@
+@import '~bootstrap/dist/css/bootstrap.css';
+
 body {
-  background-color: tomato;
+  background-color: #1B4F72;
+  display: flexbox;
+}
+
+.form-inline {
+  margin-top: 20vw;
+}
+
+.sr-only {
+  visibility: hidden;
+}
+
+.btn.btn-primary.mb-2 {
+  margin: 0 auto; 
+  display: block;
+  margin-top: 10px;
 }
