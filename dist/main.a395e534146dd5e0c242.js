@@ -1,0 +1,1 @@
+!function(){"use strict";const o=(o,c)=>o*c;console.log(o(5,6)),console.log(o(4,6))}();
