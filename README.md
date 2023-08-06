@@ -6,4 +6,4 @@
 
 [![nikita's-check](https://github.com/nesquick017/frontend-project-11/actions/workflows/nikita-check.yml/badge.svg)](https://github.com/nesquick017/frontend-project-11/actions/workflows/nikita-check.yml)
 
-[![vercel link](https://rssfeedmanager.vercel.app/)];
+[vercel link](https://rssfeedmanager.vercel.app/);
