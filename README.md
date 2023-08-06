@@ -1,4 +1,5 @@
-**Hello and welcome to my SPA 'Rss-agregator'**
+##Hello and welcome to my SPA 'Rss-agregator'
+
 [vercel link](https://rssfeedmanager.vercel.app/) to project.
 
 
