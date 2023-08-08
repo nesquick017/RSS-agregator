@@ -1,13 +1,8 @@
 import * as yup from 'yup';
 
-const setState = (objectName) => {
-  const state = { [objectName]: {} };
-  return state;
-};
-
-const setRssSchema = (feesList) =>
+export default (feesList) =>
   yup.object().shape({
-    newLink: yup
+    link: yup
       .string()
       .url('Must be a valid URL')
       .test('Must have .rss link format', 'Ресурс не содержит валидный RSS', (value) =>
@@ -18,23 +13,3 @@ const setRssSchema = (feesList) =>
         (value) => !feesList.includes(value),
       ),
   });
-
-const renderForm = (state, element) => {
-  const validation = state.rssForm.validation.valid;
-  console.log(element);
-  switch (validation) {
-    case true: {
-      element.classList.remove('is-invalid');
-      break;
-    }
-    case false: {
-      element.classList.add('is-invalid');
-      break;
-    }
-    default: {
-      throw new Error('Wrong state property');
-    }
-  }
-};
-
-export { setState, setRssSchema, renderForm };
