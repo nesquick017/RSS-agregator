@@ -1,5 +1,5 @@
 /* eslint-disable no-shadow */
-import setRssSchema from './utils.js';
+import setRssSchema from './rssValidation.js';
 import rssWatched from './watchers.js';
 
 export default () => {
@@ -22,7 +22,6 @@ export default () => {
         state.rssForm.feedsList.push(validRssURL.link);
         rssFormInput.value = '';
         rssFormInput.focus();
-        console.log(state.rssForm.feedsList);
       })
       .catch((e) => {
         stateWatched.rssForm.input.valid = false;

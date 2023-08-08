@@ -1,6 +1,6 @@
 // view.js
 import onChange from 'on-change';
-import renderForm from './renderForm.js';
+import renderForm from './renderRssForm.js';
 
 const rssWatched = (state, element) => {
   const watchedState = onChange(state, () => {
