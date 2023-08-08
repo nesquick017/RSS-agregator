@@ -10,7 +10,7 @@ export default () => {
 
   const rssForm = document.querySelector('form[name="Rss manager form"]');
   const rssFormInput = rssForm.querySelector('input[type="text"]');
-  rssFormInput.focus();
+  // rssFormInput.focus();
   const rssSchema = setRssSchema(state.rssForm.feedsList);
   const stateWatched = rssWatched(state, rssFormInput);
 
