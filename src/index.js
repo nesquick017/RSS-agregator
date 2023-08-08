@@ -2,6 +2,6 @@
 import '../index.html';
 import './stylesheets/index.scss';
 import 'bootstrap';
-import app from './addLink.js';
+import app from './validationForm.js';
 
 app();
