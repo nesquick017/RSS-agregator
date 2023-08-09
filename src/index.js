@@ -2,6 +2,6 @@
 import '../index.html';
 import './stylesheets/index.scss';
 import 'bootstrap';
-import app from './formValidation.js';
+import app from './application.js';
 
 app();

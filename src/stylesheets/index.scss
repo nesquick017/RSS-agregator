@@ -5,12 +5,8 @@ body {
   display: flexbox;
 }
 
-.form-inline {
-  margin-top: 20vw;
-}
-
-.sr-only {
-  visibility: hidden;
+label {
+  color: black;
 }
 
 .btn.btn-primary.mb-2 {
