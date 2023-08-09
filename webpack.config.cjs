@@ -22,6 +22,7 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, './index.html'),
+      inject: 'defer',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
