@@ -1,6 +1,6 @@
 ## SPA 'Rss-agregator' ##
 This is an SPA that is being developed to collect, store, and manage all your RSS feeds in one place.\
-This is **[vercel link](https://rssfeedmanager.vercel.app/)** to project.
+This is **[vercel link](https://frontend-project-11-beta-three.vercel.app/)** to project.
 
 
 

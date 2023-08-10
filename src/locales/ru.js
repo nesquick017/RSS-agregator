@@ -1,5 +1,8 @@
 export default {
   translation: {
+    validationURLSucess: 'Rss успешно добавлен',
+    validationURLError: 'Ссылка должна быть валидным URL',
+    notUniqRss: 'RSS уже существует',
     submitButton: 'Добавить',
     feedBackArea: {},
     rssHeader: 'Rss агрегатор',

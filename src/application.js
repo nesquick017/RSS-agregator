@@ -14,23 +14,24 @@ export default () => {
 
   state.rssForm = {};
   state.rssForm.feedsList = [];
-  state.rssForm.input = { value: '', valid: null, error: '' };
+  state.rssForm.input = { value: '', valid: false, error: '' };
 
-  const createI18NextInstance = (state) => {
+  const createI18NextInstance = (activeLanguage) => {
     const i18nextInstance = i18next.createInstance();
-    i18nextInstance.init({ lng: state.dictionary.activeLanguage, resources });
+    i18nextInstance.init({ lng: activeLanguage, resources });
     return i18nextInstance;
   };
 
   const rssForm = document.querySelector('form[name="Rss manager form"]');
-  const rssFormInput = rssForm.querySelector('input[type="text"]');
-  const rssSchema = setRssSchema(state.rssForm.feedsList);
+  const rssFormInput = rssForm.querySelector('#url-input');
   const stateWatched = rssWatched(state, rssForm);
+  state.dictionary.i18nextInstance = createI18NextInstance(state.dictionary.activeLanguage);
 
   rssForm.addEventListener('submit', (e) => {
+    const rssSchema = setRssSchema(state.rssForm.feedsList, state.dictionary.i18nextInstance);
     e.preventDefault();
     rssSchema
-      .validate({ link: rssFormInput.value })
+      .validate({ link: rssFormInput.value.trim() })
       .then((validRssURL) => {
         stateWatched.rssForm.input.valid = true;
         state.rssForm.feedsList.push(validRssURL.link);
@@ -40,9 +41,8 @@ export default () => {
       .catch((e) => {
         state.rssForm.input.errors = e.message;
         stateWatched.rssForm.input.valid = false;
-        console.log('Validation error, ', e);
+        console.log(e);
       });
+    renderRssForm(state, rssForm);
   });
-  renderRssForm(state, rssForm);
-  rssFormInput.focus();
 };

@@ -1,15 +1,15 @@
 import * as yup from 'yup';
 
-export default (feesList) =>
+export default (feesList, i18nextInstance) =>
   yup.object().shape({
     link: yup
       .string()
-      .url('Must be a valid URL')
-      .test('Must have .rss link format', 'Ресурс не содержит валидный RSS', (value) =>
+      .url(i18nextInstance.t('validationURLError'))
+      .test('Must have valid RSS', i18nextInstance.t('validationURLError'), (value) =>
         /\.rss$/i.test(value))
       .test(
         'Must not be listed in feeList',
-        'RSS уже существует',
+        i18nextInstance.t('notUniqRss'),
         (value) => !feesList.includes(value),
       ),
   });

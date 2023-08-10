@@ -1,24 +1,19 @@
 export default (state, form) => {
-  const validation = state.rssForm.input.valid;
-  const input = form.querySelector('input[type="text"]');
-  switch (validation) {
+  const { dictionary } = state;
+  console.log(dictionary);
+  const feedback = document.querySelector('.feedback');
+  const input = form.querySelector('#url-input');
+  switch (state.rssForm.input.valid) {
     case false: {
       input.classList.add('is-invalid');
-      const errorParagraph = document.createElement('p');
-      const classList = 'feedback m-0 position-absolute small text-danger';
-      classList.split(' ').forEach((el) => errorParagraph.classList.add(el));
-      errorParagraph.textContent = state.rssForm.input.errors;
-      form.parentNode.append(errorParagraph);
+      feedback.textContent = dictionary.i18nextInstance.t('validationURLError');
       break;
     }
     case true: {
-      console.log('all good', input);
-      const activeFeedback = document.querySelector('.feedback');
+      feedback.textContent = dictionary.i18nextInstance.t('validationURLSucess');
+      feedback.classList.remove('text-danger');
+      feedback.classList.add('text-success');
       input.classList.remove('is-invalid');
-      activeFeedback.remove();
-      break;
-    }
-    case null: {
       break;
     }
     default: {
