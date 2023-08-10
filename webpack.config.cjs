@@ -8,7 +8,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     clean: true,
-    filename: '[name].[contenthash].js',
+    filename: 'main.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -16,7 +16,7 @@ module.exports = {
       inject: 'defer',
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
+      filename: 'main.css',
     }),
   ],
   module: {
