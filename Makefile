@@ -1,12 +1,16 @@
+develop:
+	npx webpack serve
+
 install:
 	npm ci
-start:
-	npm start
-build-dev:
-	npm build-dev
-build-prod:
-	npm build-prod
-publish:
-	npm publish --dry-run
+
+build:
+	NODE_ENV=production npx webpack
+
+test:
+	npm test
+
 lint:
-	npx eslint ./src
+	npx eslint .
+
+.PHONY: test
