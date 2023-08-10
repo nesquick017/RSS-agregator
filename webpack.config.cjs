@@ -1,34 +1,48 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 
-module.exports = {
-  mode: 'production',
-  entry: path.resolve(__dirname, 'src', 'index.js'),
+const isProduction = process.env.NODE_ENV === 'production';
+
+const config = {
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    clean: true,
-    filename: 'main.js',
+    path: path.resolve(__dirname, 'public', 'dist'),
+  },
+  devServer: {
+    open: true,
+    host: 'localhost',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, './index.html'),
-      inject: 'defer',
-    }),
-    new MiniCssExtractPlugin({
-      filename: 'main.css',
+      template: 'index.html',
     }),
   ],
   module: {
     rules: [
       {
+        test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+        type: 'asset',
+      },
+      {
+        test: /\.(c|sc|sa)ss$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
         test: /\.html$/i,
         loader: 'html-loader',
       },
-      {
-        test: /\.(c|sa|sc)ss$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      },
     ],
   },
+};
+
+module.exports = () => {
+  if (isProduction) {
+    config.mode = 'production';
+
+    config.plugins.push(new WorkboxWebpackPlugin.GenerateSW());
+  } else {
+    config.mode = 'development';
+  }
+  return config;
 };
