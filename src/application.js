@@ -4,7 +4,6 @@ import i18next from 'i18next';
 import rssWatched from './watchers.js';
 import resources from './locales/index.js';
 import setRssSchema from './rssValidation.js';
-import rssRequest from './rssRequest.js';
 
 export default () => {
   const state = {};

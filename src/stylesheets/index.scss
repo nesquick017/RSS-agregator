@@ -2,7 +2,7 @@
 
 body {
   background-color: #1b4f72;
-  display: flexbox;
+  display: flex;
 }
 
 label {
@@ -13,8 +13,7 @@ label {
   color: gray;
 }
 
-.btn.btn-primary.mb-2 {
-  margin: 0 auto;
-  display: block;
-  margin-top: 10px;
+.mx-auto {
+  margin-right: auto !important;
+  margin-left: auto !important;
 }

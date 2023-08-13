@@ -1,5 +1,6 @@
 import rssParser from './rssParser.js';
 import rssRequest from './rssRequest.js';
+import buildRssContent from './buildRssContent.js';
 
 export default (error, form, dictionary) => {
   const i18n = dictionary.i18nextInstance;
@@ -12,7 +13,9 @@ export default (error, form, dictionary) => {
     input.classList.add('is-invalid');
   } else if (error.type === null) {
     const relevantRssUrl = input.value;
-    rssRequest(relevantRssUrl).then((data) => rssParser(data));
+    rssRequest(relevantRssUrl)
+      .then((respond) => rssParser(respond))
+      .then((parsedData) => buildRssContent(parsedData));
     feedbackEl.textContent = i18n.t('validationURLSucess');
     feedbackEl.classList.remove('text-danger');
     feedbackEl.classList.add('text-success');
