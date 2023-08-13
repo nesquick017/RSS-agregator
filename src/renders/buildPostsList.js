@@ -1,9 +1,7 @@
 export default (element, parsedData) => {
   const feedsUl = element.querySelector('ul');
-  console.log(feedsUl);
   const parsedPostsList = Array.from(parsedData.querySelectorAll('item'));
   parsedPostsList.forEach((post) => {
-    console.log(post);
     const postTitle = post.querySelector('title');
     const link = post.querySelector('link');
     const newLi = document.createElement('li');

@@ -1,5 +1,5 @@
-import rssParser from './rssParser.js';
-import rssRequest from './rssRequest.js';
+import rssParser from '../rssParser.js';
+import rssRequest from '../rssRequest.js';
 import buildRssContent from './buildRssContent.js';
 
 export default (error, form, dictionary) => {

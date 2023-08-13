@@ -1,13 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 import i18next from 'i18next';
-import rssWatched from './watchers.js';
+import rssWatched from './watchers/watchers.js';
 import resources from './locales/index.js';
 import setRssSchema from './rssValidation.js';
 
 export default () => {
   const state = {};
   state.rssContent = {};
+  state.modalWindow = { active: false };
   state.dictionary = {};
   state.dictionary.activeLanguage = 'ru';
   state.dictionary.i18nextInstance = null;
