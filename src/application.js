@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 import i18next from 'i18next';
-import rssWatched from './watchers/watchers.js';
+import rssWatched from './watchers/watcher.js';
 import resources from './locales/index.js';
 import setRssSchema from './rssValidation.js';
 
