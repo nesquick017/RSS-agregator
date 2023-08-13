@@ -1,12 +1,15 @@
 @import '~bootstrap/dist/css/bootstrap.css';
 
 body {
-  background-color: #1b4f72;
   display: flex;
 }
 
 label {
   color: black;
+}
+
+.main {
+  background-color: white;
 }
 
 .mt-2.mb-0 {

@@ -5,6 +5,6 @@ export default (feesList, i18nextInstance) =>
     link: yup
       .string()
       .url()
-      .test('rss', 'no rss content', (value) => /\.rss$/i.test(value))
+      .test('rss', 'no rss content', (value) => /rss/i.test(value))
       .test('duplicate', i18nextInstance.t('notUniqRss'), (value) => !feesList.includes(value)),
   });
