@@ -7,7 +7,7 @@ import setRssSchema from './rssValidation.js';
 
 export default () => {
   const state = {};
-  state.rssContent = {};
+  state.rssContent = { feeds: { 1: {} }, empty: true };
   state.modalWindow = { active: false };
   state.dictionary = {};
   state.dictionary.activeLanguage = 'ru';
