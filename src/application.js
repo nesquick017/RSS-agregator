@@ -1,3 +1,4 @@
+/* eslint-disable newline-per-chained-call */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
 import i18next from 'i18next';
@@ -16,6 +17,11 @@ export default () => {
   state.rssForm = {};
   state.rssForm.feedsListLink = [];
   state.rssForm.input = { value: '', valid: true, error: '' };
+
+  const validate = (url, urlList) => {
+    const schema = string().trim().required().url().notOneOf(urlList);
+    return schema.validate(url);
+  };
 
   const createI18NextInstance = (activeLanguage) => {
     const i18nextInstance = i18next.createInstance();

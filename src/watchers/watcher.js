@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 // view.js
 import onChange from 'on-change';
-import render from '../renders/render.js';
+import render from '../render.js';
 
 const rssWatched = (state, element) => {
   const watchedState = onChange(state, (path, value) => {
