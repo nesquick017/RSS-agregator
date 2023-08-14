@@ -1,14 +1,14 @@
 /* eslint-disable newline-per-chained-call */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-shadow */
+import * as yup from 'yup';
 import i18next from 'i18next';
 import rssWatched from './watchers/watcher.js';
 import resources from './locales/index.js';
-import setRssSchema from './rssValidation.js';
 
 export default () => {
   const state = {};
-  state.rssContent = { feeds: { 1: {} }, empty: true };
+  state.rssContent = { feeds: {}, empty: true };
   state.modalWindow = { active: false };
   state.dictionary = {};
   state.dictionary.activeLanguage = 'ru';
@@ -19,7 +19,13 @@ export default () => {
   state.rssForm.input = { value: '', valid: true, error: '' };
 
   const validate = (url, urlList) => {
-    const schema = string().trim().required().url().notOneOf(urlList);
+    const schema = yup
+      .string()
+      .trim()
+      .required()
+      .url()
+      .notOneOf(urlList)
+      .test('rss', 'no rss content', (value) => /rss/i.test(value));
     return schema.validate(url);
   };
 
@@ -34,11 +40,10 @@ export default () => {
   state.dictionary.i18nextInstance = createI18NextInstance(state.dictionary.activeLanguage);
 
   rssForm.addEventListener('submit', (e) => {
-    const rssFormInput = rssForm.querySelector('#url-input');
-    const rssSchema = setRssSchema(state.rssForm.feedsListLink, state.dictionary.i18nextInstance);
     e.preventDefault();
-    rssSchema
-      .validate({ link: rssFormInput.value.trim() })
+    const rssFormInput = rssForm.querySelector('#url-input');
+    const url = rssFormInput.value;
+    validate(url, state.rssForm.feedsListLink)
       .then((validRssURL) => {
         stateWatched.rssForm.input.error = { type: null };
         state.rssForm.feedsListLink.push(validRssURL.link);
