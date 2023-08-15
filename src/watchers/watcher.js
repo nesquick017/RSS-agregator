@@ -3,11 +3,9 @@
 import onChange from 'on-change';
 import render from '../render.js';
 
-const rssWatched = (state, element) => {
-  const watchedState = onChange(state, (path, value) => {
-    render(value, element, state);
+export default (initialState) => {
+  const watchedData = onChange(initialState, (path, value) => {
+    render(initialState);
   });
-  return watchedState;
+  return watchedData;
 };
-
-export default rssWatched;

@@ -1,9 +1,9 @@
 export default {
   translation: {
-    validationURLSucess: 'Rss успешно добавлен',
+    submit: 'Rss успешно добавлен',
     url: 'Ссылка должна быть валидным URL',
     rss: 'Ресурс не содержит валидный RSS',
-    duplicate: 'RSS уже существует',
+    notOneOf: 'RSS уже существует',
     submitButton: 'Добавить',
     feedBackArea: {},
     rssHeader: 'Rss агрегатор',

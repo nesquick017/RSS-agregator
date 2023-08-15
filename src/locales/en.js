@@ -1,9 +1,9 @@
 export default {
   translation: {
-    validationURLSucess: 'Rss has been sucessfully added',
+    submit: 'Rss has been sucessfully added',
     url: 'The link must be a valid URL',
     rss: 'Dosent have a valid RSS',
-    duplicate: 'RSS already been declarated',
+    notOneOf: 'RSS already been declarated',
     submitButton: 'Add',
     feedBackArea: {},
     rssHeader: 'Rss agregator',
