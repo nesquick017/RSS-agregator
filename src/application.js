@@ -90,8 +90,7 @@ export default () => {
             initialState.rssForm.process.processState = 'filling';
             initialState.rssForm.valid = true;
             initialState.rssForm.process.error = '';
-            addNewContent(initialState, parsedData);
-            watchedState.rssForm.process.processState = 'pending';
+            addNewContent(watchedState, parsedData);
           });
       })
       .catch((e) => {
