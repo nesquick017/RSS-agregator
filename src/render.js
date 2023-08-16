@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // const buildContentBlock = (blockName, section) => {
 //   try {
 //     const elementBlock = document.createElement('div');
