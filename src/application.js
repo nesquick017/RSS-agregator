@@ -13,12 +13,20 @@ import render from './render.js';
 
 export default () => {
   const initialState = {
+    getAxiosResponse(url) {
+      const allOrigins = 'https://allorigins.hexlet.app/get';
+      const newUrl = new URL(allOrigins);
+      newUrl.searchParams.set('url', url);
+      newUrl.searchParams.set('disableCache', 'true');
+      return axios.get(newUrl);
+    },
     activeLanguage: 'ru',
     rssForm: {
       valid: true,
       process: {
         processState: 'pending',
         error: null,
+        value: '',
       },
     },
     rssContent: {
@@ -41,13 +49,6 @@ export default () => {
     i18nextInstance.init({ lng: activeLanguage, resources });
     return i18nextInstance;
   };
-  const getAxiosResponse = (url) => {
-    const allOrigins = 'https://allorigins.hexlet.app/get';
-    const newUrl = new URL(allOrigins);
-    newUrl.searchParams.set('url', url);
-    newUrl.searchParams.set('disableCache', 'true');
-    return axios.get(newUrl);
-  };
 
   const rssForm = document.querySelector('.rss-form, text-body');
   const rssFormInput = rssForm.querySelector('#url-input');
@@ -61,10 +62,13 @@ export default () => {
       render(elements, initialState, i18nInstance),
     );
     const { visitedLinksIds } = initialState.uiState;
+    const { getAxiosResponse } = initialState;
     e.preventDefault();
     const newUrl = rssFormInput.value;
     validate(newUrl, visitedLinksIds)
       .then((validUrl) => {
+        initialState.rssForm.value = validUrl;
+        initialState.rssForm.valid = true;
         visitedLinksIds.add(validUrl);
         getAxiosResponse(validUrl)
           .then((responde) => rssParser(responde.data.contents))
@@ -78,6 +82,7 @@ export default () => {
           });
       })
       .catch((e) => {
+        initialState.rssForm.valid = false;
         watchedState.rssForm.process.error = e;
       });
   });
