@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 // view.js
 import onChange from 'on-change';
-import render from '../render.js';
 
-export default (initialState) => {
+export default (initialState, callback) => {
   const watchedData = onChange(initialState, (path, value) => {
-    render(initialState);
+    callback();
   });
   return watchedData;
 };

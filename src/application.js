@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable no-shadow */
 /* eslint-disable newline-per-chained-call */
 /* eslint-disable no-unused-vars */
@@ -8,11 +9,11 @@ import i18next from 'i18next';
 import rssWatcher from './watchers/watcher.js';
 import resources from './locales/index.js';
 import rssParser from './rssParser.js';
+import render from './render.js';
 
 export default () => {
   const initialState = {
     activeLanguage: 'ru',
-    i18nInstance: null,
     rssForm: {
       valid: true,
       process: {
@@ -31,13 +32,7 @@ export default () => {
   };
 
   const validate = (url, urlList) => {
-    const schema = yup
-      .string()
-      .trim()
-      .required()
-      .url()
-      .notOneOf(urlList)
-      .test('rss', 'no rss content', (value) => /rss/i.test(value));
+    const schema = yup.string().trim().required().url().notOneOf(urlList);
     return schema.validate(url);
   };
 
@@ -54,51 +49,36 @@ export default () => {
     return axios.get(newUrl);
   };
 
-  const addNewContent = (initialState, parsedData) => {
-    const { rssContent } = initialState;
-    const title = parsedData.querySelector('title');
-    const description = parsedData.querySelector('description');
-    const feedId = rssContent.feeds.length;
-    const newFeed = { feedId, content: { title, description } };
-    rssContent.feeds.push(newFeed);
-    const newPosts = parsedData.querySelectorAll('item');
-    newPosts.forEach((post) => {
-      const postId = rssContent.posts.length;
-      const title = post.querySelector('title');
-      const description = post.querySelector('description');
-      const link = post.querySelector('link').textContent;
-      const newPost = { feedId, postId, content: { title, description, link } };
-      rssContent.posts.push(newPost);
-    });
-  };
-
   const rssForm = document.querySelector('.rss-form, text-body');
   const rssFormInput = rssForm.querySelector('#url-input');
-  const watchedState = rssWatcher(initialState);
 
   rssForm.addEventListener('submit', (e) => {
-    initialState.i18nInstance = createI18NextInstance(initialState.activeLanguage, resources);
+    const feedsElement = document.querySelector('.feeds');
+    const postsElement = document.querySelector('.posts');
+    const elements = { feedsElement, postsElement };
+    const i18nInstance = createI18NextInstance(initialState.activeLanguage, resources);
+    const watchedState = rssWatcher(initialState, () =>
+      render(elements, initialState, i18nInstance),
+    );
     const { visitedLinksIds } = initialState.uiState;
     e.preventDefault();
     const newUrl = rssFormInput.value;
     validate(newUrl, visitedLinksIds)
       .then((validUrl) => {
-        initialState.uiState.visitedLinksIds.add(validUrl);
+        visitedLinksIds.add(validUrl);
         getAxiosResponse(validUrl)
-          .then((respond) => rssParser(respond))
-          .then((parsedData) => {
-            initialState.rssForm.process.processState = 'filling';
-            initialState.rssForm.valid = true;
-            initialState.rssForm.process.error = '';
-            addNewContent(initialState, parsedData);
-            watchedState.rssForm.process.processState = 'pending';
+          .then((responde) => rssParser(responde.data.contents))
+          .then((data) => {
+            const { feed, posts } = data;
+            const { rssContent } = initialState;
+            const dataId = visitedLinksIds.size;
+            rssContent.feeds.push({ dataId, feed });
+            rssContent.posts.push({ dataId, posts });
+            watchedState.rssForm.process.error = '';
           });
       })
       .catch((e) => {
-        initialState.rssForm.process.processState = 'filling';
-        initialState.rssForm.valid = false;
-        initialState.rssForm.process.error = e;
-        watchedState.rssForm.process.processState = 'pending';
+        watchedState.rssForm.process.error = e;
       });
   });
 };
