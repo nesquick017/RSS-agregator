@@ -10,6 +10,7 @@ const getNewPosts = (state) => {
   const promises = state.rssContent.feeds.map(({ link, feedId }) =>
     getAxiosResponse(link)
       .then((response) => {
+        console.log(response);
         const { posts } = rssParser(response.data.contents);
         const addedPosts = state.rssContent.posts.map((post) => post.link);
         const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
