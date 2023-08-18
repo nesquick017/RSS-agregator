@@ -23,7 +23,7 @@ const getNewPosts = (state) => {
   );
 
   Promise.allSettled(promises).finally(() => {
-    setTimeout(() => getNewPosts(state), 300);
+    setTimeout(() => getNewPosts(state), 5000);
   });
 };
 
