@@ -6,10 +6,8 @@
 import axios from 'axios';
 import * as yup from 'yup';
 import i18next from 'i18next';
-import rssWatcher from './watchers/watcher.js';
 import resources from './locales/index.js';
-import rssParser from './rssParser.js';
-import render from './render.js';
+import rssWatcher from './watchers/watcher.js';
 
 const getAxiosResponse = (url) => {
   const allOrigins = 'https://allorigins.hexlet.app/get';
@@ -53,39 +51,21 @@ export default () => {
   };
 
   const rssForm = document.querySelector('.rss-form, text-body');
-  const rssFormInput = rssForm.querySelector('#url-input');
 
   rssForm.addEventListener('submit', (e) => {
-    const feedsElement = document.querySelector('.feeds');
-    const postsElement = document.querySelector('.posts');
-    const elements = { feedsElement, postsElement };
-    const i18nInstance = createI18NextInstance(initialState.activeLanguage, resources);
-    const watchedState = rssWatcher(initialState, () =>
-      render(elements, initialState, i18nInstance),
-    );
-    const { visitedLinksIds } = initialState.uiState;
-    const { getAxiosResponse } = initialState;
     e.preventDefault();
+    const i18nextInstance = createI18NextInstance(initialState.activeLanguage);
+    const watchedState = rssWatcher(initialState);
+    const rssFormInput = rssForm.querySelector('#url-input');
     const newUrl = rssFormInput.value;
+    const { visitedLinksIds } = initialState.uiState;
+    console.log(visitedLinksIds);
     validate(newUrl, visitedLinksIds)
       .then((validUrl) => {
-        initialState.rssForm.value = validUrl;
-        initialState.rssForm.valid = true;
-        visitedLinksIds.add(validUrl);
-        getAxiosResponse(validUrl)
-          .then((responde) => rssParser(responde.data.contents))
-          .then((data) => {
-            const { feed, posts } = data;
-            const { rssContent } = initialState;
-            const dataId = visitedLinksIds.size;
-            rssContent.feeds.push({ dataId, feed });
-            rssContent.posts.push({ dataId, posts });
-            watchedState.rssForm.process.error = '';
-          });
+        watchedState.rssForm.process.value = validUrl;
       })
       .catch((e) => {
-        initialState.rssForm.valid = false;
-        watchedState.rssForm.process.error = e;
+        console.log(`${e}\n${e.type}`);
       });
   });
 };
