@@ -11,15 +11,17 @@ import resources from './locales/index.js';
 import rssParser from './rssParser.js';
 import render from './render.js';
 
+const getAxiosResponse = (url) => {
+  const allOrigins = 'https://allorigins.hexlet.app/get';
+  const newUrl = new URL(allOrigins);
+  newUrl.searchParams.set('url', url);
+  newUrl.searchParams.set('disableCache', 'true');
+  return axios.get(newUrl);
+};
+export { getAxiosResponse };
+
 export default () => {
   const initialState = {
-    getAxiosResponse(url) {
-      const allOrigins = 'https://allorigins.hexlet.app/get';
-      const newUrl = new URL(allOrigins);
-      newUrl.searchParams.set('url', url);
-      newUrl.searchParams.set('disableCache', 'true');
-      return axios.get(newUrl);
-    },
     activeLanguage: 'ru',
     rssForm: {
       valid: true,

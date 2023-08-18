@@ -1,20 +1,8 @@
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
 import onChange from 'on-change';
-
-export default (initialState, callback) => {
-  const { getAxiosResponse } = initialState;
-  const watchedData = onChange(initialState, (path, value) => {
-    const { rssForm } = initialState;
-    if (rssForm.valid) {
-      setInterval(() => {
-        getAxiosResponse(rssForm.value).then((responde) => console.log(responde.data));
-      }, 5000);
-    }
-    callback();
-  });
-  return watchedData;
-};
+import { getAxiosResponse } from '../application';
+import rssParser from '../rssParser';
 
 const getNewPosts = (state) => {
   const promises = state.content.feeds.map(({ link, feedId }) =>
@@ -32,4 +20,17 @@ const getNewPosts = (state) => {
   Promise.allSettled(promises).finally(() => {
     setTimeout(() => getNewPosts(state), timeout);
   });
+};
+
+export default (initialState, callback) => {
+  const watchedData = onChange(initialState, (path, value) => {
+    const feedId = initialState.uiState.visitedLinksIds.size;
+    initialState.uiState.visitedLinksIds.add(value);
+    getAxiosResponse(value).then((response) => {
+      const feed = rssParser(response.data.contents);
+      initialState.rssContent.feed.push({ feedId, ...feed });
+      getNewPosts(initialState);
+    });
+  });
+  return watchedData;
 };
