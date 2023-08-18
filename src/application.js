@@ -59,7 +59,6 @@ export default () => {
     const rssFormInput = rssForm.querySelector('#url-input');
     const newUrl = rssFormInput.value;
     const { visitedLinksIds } = initialState.uiState;
-    console.log(visitedLinksIds);
     validate(newUrl, visitedLinksIds)
       .then((validUrl) => {
         watchedState.rssForm.process.value = validUrl;
