@@ -4,4 +4,8 @@ import './stylesheets/index.scss';
 import 'bootstrap';
 import app from './application.js';
 
-app();
+try {
+  app();
+} catch (e) {
+  console.log(e);
+}

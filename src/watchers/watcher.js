@@ -33,11 +33,15 @@ export default (initialState) => {
     const url = initialState.rssForm.process.value;
     const feedId = visitedLinksIds.size;
     visitedLinksIds.add(url);
-    getAxiosResponse(url).then((response) => {
-      const { feed, posts } = rssParser(response.data.contents);
-      initialState.rssContent.feeds.push({ feedId, feed, link: url });
-      initialState.rssContent.posts.push({ feedId, posts });
-    });
+    getAxiosResponse(url)
+      .then((response) => {
+        const { feed, posts } = rssParser(response.data.contents);
+        initialState.rssContent.feeds.push({ feedId, feed, link: url });
+        initialState.rssContent.posts.push({ feedId, posts });
+      })
+      .catch((e) => {
+        console.log(e);
+      });
   });
   getNewPosts(watchedData);
   return watchedData;
