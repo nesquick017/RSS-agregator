@@ -132,20 +132,25 @@
 //   }
 // };
 
-const renderFeedback = (section, state) => {
+const renderFeedback = (section, state, i18nextInstance) => {
   const { valid } = state.rssForm;
   switch (valid) {
     case true: {
       console.log('sucess');
       section.classList.remove('is-invalid', 'text-danger');
       section.classList.add('text-success');
+      section.textContent = i18nextInstance.t('submit');
+      break;
+    }
+    case false: {
+      section.classList.add('is-invalid', 'text-danger');
+      section.classList.remove('text-success');
+      section.textContent = i18nextInstance.t(state.rssForm.process.error.type);
+      console.log(i18nextInstance.t(state.rssForm.process.error.type));
       break;
     }
     default: {
-      console.log('error');
-      section.classList.add('is-invalid', 'text-danger');
-      section.classList.remove('text-success');
-      break;
+      console.log('error with validation value');
     }
   }
 };
@@ -154,5 +159,5 @@ export default (elements, initialState, i18nextInstance) => {
   const { feedsEl, postsEl, feedbackEl } = elements;
   const { rssContent } = initialState;
   const { error } = initialState.rssForm.process;
-  renderFeedback(feedbackEl, initialState);
+  renderFeedback(feedbackEl, initialState, i18nextInstance);
 };

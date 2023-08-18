@@ -1,3 +1,4 @@
+/* eslint-disable function-paren-newline */
 /* eslint-disable max-len */
 /* eslint-disable no-shadow */
 /* eslint-disable newline-per-chained-call */
@@ -5,7 +6,7 @@
 
 import axios from 'axios';
 import * as yup from 'yup';
-import i18next, { init } from 'i18next';
+import i18next from 'i18next';
 import resources from './locales/index.js';
 import rssWatcher from './watchers/watcher.js';
 import render from './render.js';
@@ -22,6 +23,7 @@ const getNewPosts = (state) => {
   const promises = state.rssContent.feeds.map(({ link, feedId }) =>
     getAxiosResponse(link).then((response) => {
       const { posts } = parser(response.data.contents);
+      console.log(posts);
       const addedPosts = state.rssContent.posts.map((post) => post.link);
       const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
       if (newPosts.length > 0) {
@@ -32,7 +34,7 @@ const getNewPosts = (state) => {
   );
 
   Promise.allSettled(promises).finally(() => {
-    setTimeout(() => getNewPosts(state), timeout);
+    setTimeout(() => getNewPosts(state), 1000);
   });
 };
 export { getNewPosts };
@@ -78,17 +80,18 @@ export default () => {
     const postsEl = document.querySelector('.posts');
     const feedsEl = document.querySelector('.feeds');
     const feedbackEl = document.querySelector('.feedback');
+    const elements = { postsEl, feedsEl, feedbackEl };
     const i18nextInstance = createI18NextInstance(initialState.activeLanguage, resources);
-    const watchedState = rssWatcher(
-      initialState,
-      render({ postsEl, feedsEl, feedbackEl }, initialState, i18nextInstance),
-    );
+    const watchedState = rssWatcher(initialState, render, elements, initialState, i18nextInstance);
+    getNewPosts(watchedState);
     validate(url, visitedLinksIds)
       .then((validUrl) => {
         visitedLinksIds.add(validUrl);
+        watchedState.rssForm.valid = true;
       })
       .catch((e) => {
-        console.log(i18nextInstance.t(`${e.type}`));
+        initialState.rssForm.process.error = e;
+        watchedState.rssForm.valid = false;
       });
   });
 };
