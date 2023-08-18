@@ -5,9 +5,10 @@
 
 import axios from 'axios';
 import * as yup from 'yup';
-import i18next from 'i18next';
+import i18next, { init } from 'i18next';
 import resources from './locales/index.js';
 import rssWatcher from './watchers/watcher.js';
+import render from './render.js';
 
 const getAxiosResponse = (url) => {
   const allOrigins = 'https://allorigins.hexlet.app/get';
@@ -16,7 +17,25 @@ const getAxiosResponse = (url) => {
   newUrl.searchParams.set('disableCache', 'true');
   return axios.get(newUrl);
 };
-export { getAxiosResponse };
+
+const getNewPosts = (state) => {
+  const promises = state.rssContent.feeds.map(({ link, feedId }) =>
+    getAxiosResponse(link).then((response) => {
+      const { posts } = parser(response.data.contents);
+      const addedPosts = state.rssContent.posts.map((post) => post.link);
+      const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
+      if (newPosts.length > 0) {
+        createPosts(state, newPosts, feedId);
+      }
+      return Promise.resolve();
+    }),
+  );
+
+  Promise.allSettled(promises).finally(() => {
+    setTimeout(() => getNewPosts(state), timeout);
+  });
+};
+export { getNewPosts };
 
 export default () => {
   const initialState = {
@@ -25,7 +44,7 @@ export default () => {
       valid: true,
       process: {
         processState: 'pending',
-        error: null,
+        error: '',
         value: '',
       },
     },
@@ -51,20 +70,25 @@ export default () => {
   };
 
   const rssForm = document.querySelector('.rss-form, text-body');
-
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const i18nextInstance = createI18NextInstance(initialState.activeLanguage);
-    const watchedState = rssWatcher(initialState);
-    const rssFormInput = rssForm.querySelector('#url-input');
-    const newUrl = rssFormInput.value;
+    const input = rssForm.querySelector('#url-input');
+    const url = input.value;
     const { visitedLinksIds } = initialState.uiState;
-    validate(newUrl, visitedLinksIds)
+    const postsEl = document.querySelector('.posts');
+    const feedsEl = document.querySelector('.feeds');
+    const feedbackEl = document.querySelector('.feedback');
+    const i18nextInstance = createI18NextInstance(initialState.activeLanguage, resources);
+    const watchedState = rssWatcher(
+      initialState,
+      render({ postsEl, feedsEl, feedbackEl }, initialState, i18nextInstance),
+    );
+    validate(url, visitedLinksIds)
       .then((validUrl) => {
-        watchedState.rssForm.process.value = validUrl;
+        visitedLinksIds.add(validUrl);
       })
       .catch((e) => {
-        console.log(`${e}\n${e.type}`);
+        console.log(i18nextInstance.t(`${e.type}`));
       });
   });
 };

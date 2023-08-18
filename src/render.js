@@ -132,14 +132,27 @@
 //   }
 // };
 
-export default (elements, initialState, i18nInstance) => {
-  const { feedsElement, postsElement } = elements;
+const renderFeedback = (section, state) => {
+  const { valid } = state.rssForm;
+  switch (valid) {
+    case true: {
+      console.log('sucess');
+      section.classList.remove('is-invalid', 'text-danger');
+      section.classList.add('text-success');
+      break;
+    }
+    default: {
+      console.log('error');
+      section.classList.add('is-invalid', 'text-danger');
+      section.classList.remove('text-success');
+      break;
+    }
+  }
+};
+
+export default (elements, initialState, i18nextInstance) => {
+  const { feedsEl, postsEl, feedbackEl } = elements;
   const { rssContent } = initialState;
   const { error } = initialState.rssForm.process;
-
-  if (error) {
-    console.log(error.type);
-  } else {
-    console.log('success');
-  }
+  renderFeedback(feedbackEl, initialState);
 };
