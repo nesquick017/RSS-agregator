@@ -132,20 +132,23 @@
 //   }
 // };
 
-const renderFeedback = (section, state, i18nextInstance) => {
+const renderFeedback = (elements, state, i18nextInstance) => {
+  const { feedbackEl, input } = elements;
   const { valid } = state.rssForm;
   switch (valid) {
     case true: {
-      console.log('sucess');
-      section.classList.remove('is-invalid', 'text-danger');
-      section.classList.add('text-success');
-      section.textContent = i18nextInstance.t('submit');
+      feedbackEl.classList.remove('is-invalid', 'text-danger');
+      feedbackEl.classList.add('text-success');
+      feedbackEl.textContent = i18nextInstance.t('submit');
+      console.log(i18nextInstance.t('submit'));
+      input.value = '';
+      input.focus();
       break;
     }
     case false: {
-      section.classList.add('is-invalid', 'text-danger');
-      section.classList.remove('text-success');
-      section.textContent = i18nextInstance.t(state.rssForm.process.error.type);
+      feedbackEl.classList.add('is-invalid', 'text-danger');
+      feedbackEl.classList.remove('text-success');
+      feedbackEl.textContent = i18nextInstance.t(state.rssForm.process.error.type);
       console.log(i18nextInstance.t(state.rssForm.process.error.type));
       break;
     }
@@ -156,8 +159,8 @@ const renderFeedback = (section, state, i18nextInstance) => {
 };
 
 export default (elements, initialState, i18nextInstance) => {
-  const { feedsEl, postsEl, feedbackEl } = elements;
+  const { feedsContainer, postsContainer, feedbackEl } = elements;
   const { rssContent } = initialState;
   const { error } = initialState.rssForm.process;
-  renderFeedback(feedbackEl, initialState, i18nextInstance);
+  renderFeedback(elements, initialState, i18nextInstance);
 };

@@ -74,13 +74,15 @@ export default () => {
   const rssForm = document.querySelector('.rss-form, text-body');
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const input = rssForm.querySelector('#url-input');
-    const url = input.value;
     const { visitedLinksIds } = initialState.uiState;
-    const postsEl = document.querySelector('.posts');
-    const feedsEl = document.querySelector('.feeds');
-    const feedbackEl = document.querySelector('.feedback');
-    const elements = { postsEl, feedsEl, feedbackEl };
+
+    const elements = {
+      postsContainer: document.querySelector('.posts'),
+      feedsContainer: document.querySelector('.feeds'),
+      feedbackEl: document.querySelector('.feedback'),
+      input: rssForm.querySelector('#url-input'),
+    };
+    const url = elements.input.value;
     const i18nextInstance = createI18NextInstance(initialState.activeLanguage, resources);
     const watchedState = rssWatcher(initialState, render, elements, initialState, i18nextInstance);
     getNewPosts(watchedState);
