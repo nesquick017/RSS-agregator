@@ -83,13 +83,13 @@ export default () => {
       input: rssForm.querySelector('#url-input'),
       modal: document.querySelector('.modal-content'),
     };
-    const url = elements.input.value;
+    const newUrl = elements.input.value;
     const i18nextInstance = createI18NextInstance(initialState.activeLanguage, resources);
     const watchedState = rssWatcher(initialState, render, elements, initialState, i18nextInstance);
 
     getNewPosts(watchedState);
 
-    validate(url, visitedLinksIds)
+    validate(newUrl, visitedLinksIds)
       .then((validUrl) => {
         visitedLinksIds.add(validUrl);
         watchedState.rssForm.valid = true;

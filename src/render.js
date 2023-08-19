@@ -159,8 +159,7 @@ const renderFeedback = (elements, state, i18nextInstance) => {
 };
 
 export default (elements, initialState, i18nextInstance) => {
-  const { feedsContainer, postsContainer, feedbackEl } = elements;
+  const { postsContainer, feedsContainer, modal } = elements;
   const { rssContent } = initialState;
-  const { error } = initialState.rssForm.process;
   renderFeedback(elements, initialState, i18nextInstance);
 };
