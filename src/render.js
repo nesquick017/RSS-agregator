@@ -134,7 +134,7 @@
 
 const renderFeedback = (elements, state, i18nextInstance) => {
   const { feedbackEl, input } = elements;
-  const { valid } = state.rssForm;
+  const { valid } = state;
   switch (valid) {
     case true: {
       feedbackEl.classList.remove('is-invalid', 'text-danger');
@@ -148,8 +148,9 @@ const renderFeedback = (elements, state, i18nextInstance) => {
     case false: {
       feedbackEl.classList.add('is-invalid', 'text-danger');
       feedbackEl.classList.remove('text-success');
-      feedbackEl.textContent = i18nextInstance.t(state.rssForm.process.error.type);
-      console.log(i18nextInstance.t(state.rssForm.process.error.type));
+      console.log(state.process.error.type, 123);
+      feedbackEl.textContent = i18nextInstance.t(state.process.error.type);
+      console.log(i18nextInstance.t(state.process.error.type));
       break;
     }
     default: {
