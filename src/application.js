@@ -28,6 +28,7 @@ const app = (i18nInstance) => {
       modalId: '',
     },
   };
+
   const getAxiosResponse = (url) => {
     const allOrigins = 'https://allorigins.hexlet.app/get';
     const newUrl = new URL(allOrigins);
