@@ -1,3 +1,7 @@
+/* eslint-disable no-shadow */
+/* eslint-disable object-curly-newline */
+/* eslint-disable function-paren-newline */
+/* eslint-disable newline-per-chained-call */
 import i18next from 'i18next';
 import onChange from 'on-change';
 import * as yup from 'yup';
@@ -24,7 +28,6 @@ const app = (i18nInstance) => {
       modalId: '',
     },
   };
-
   const getAxiosResponse = (url) => {
     const allOrigins = 'https://allorigins.hexlet.app/get';
     const newUrl = new URL(allOrigins);
