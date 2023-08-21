@@ -79,11 +79,9 @@ const app = (i18nInstance) => {
     const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
     const currentUrl = input.value;
     const { visitedLinksIds } = initialState.uiState;
+    const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
     validate(currentUrl, visitedLinksIds)
       .then((validUrl) => {
-        const watchedState = onChange(initialState, () =>
-          render(elements, initialState, i18nInstance),
-        );
         getNewPosts(watchedState);
         visitedLinksIds.add(validUrl);
         const feedId = visitedLinksIds.size;
@@ -93,20 +91,19 @@ const app = (i18nInstance) => {
             createPosts(initialState, posts, feedId);
             initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
             initialState.valid = true;
+            watchedState.process.processState = 'finished';
           } catch (e) {
+            console.log(e.message);
             initialState.valid = false;
+            initialState.process.error = e;
+            watchedState.process.processState = 'finished';
           }
-          console.log(initialState);
-          watchedState.process.processState = 'fihished';
         });
       })
       .catch((e) => {
         initialState.valid = false;
         initialState.process.error = e;
-        const watchedState = onChange(initialState, () =>
-          render(elements, initialState, i18nInstance),
-        );
-        watchedState.process.processState = 'fihished';
+        watchedState.process.processState = 'finished';
       });
   });
 };

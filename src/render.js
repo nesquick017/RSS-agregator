@@ -89,7 +89,6 @@ const renderFeedback = (elements, state, i18nextInstance) => {
       feedbackEl.classList.remove('is-invalid', 'text-danger');
       feedbackEl.classList.add('text-success');
       feedbackEl.textContent = i18nextInstance.t('submit');
-      console.log(i18nextInstance.t('submit'));
       input.value = '';
       input.focus();
       break;
@@ -97,8 +96,10 @@ const renderFeedback = (elements, state, i18nextInstance) => {
     case false: {
       feedbackEl.classList.add('is-invalid', 'text-danger');
       feedbackEl.classList.remove('text-success');
-      feedbackEl.textContent = i18nextInstance.t(state.process.error.type);
-      console.log(i18nextInstance.t(state.process.error.type));
+      feedbackEl.textContent = i18nextInstance.t(
+        state.process.error.type || state.process.error.message,
+      );
+      console.log(state.process.error.type);
       break;
     }
     default: {
