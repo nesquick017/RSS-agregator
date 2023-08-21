@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
 
-const buildPosts = (state, modalWindow) => {
+const buildPostsContent = (state, modalWindow) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
     const { title, link, description } = post;
@@ -48,7 +48,7 @@ const buildPosts = (state, modalWindow) => {
   return content;
 };
 
-const buildFeeds = (state) => {
+const buildFeedsContent = (state) => {
   const { feeds } = state.content;
   const newFeeds = feeds.map((feed) => {
     const { title, description } = feed;
@@ -125,10 +125,10 @@ export default (elements, state, i18nextInstance) => {
     const feedsList = feedSection.querySelector('ul');
     const postsList = postSection.querySelector('ul');
 
-    const posts = buildPosts(state, modalWindow);
+    const posts = buildPostsContent(state, modalWindow);
     postsList.replaceChildren(...posts);
 
-    const feeds = buildFeeds(state);
+    const feeds = buildFeedsContent(state);
     feedsList.replaceChildren(...feeds);
   }
 };
