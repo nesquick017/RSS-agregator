@@ -83,17 +83,16 @@ const app = (i18nInstance) => {
     validate(currentUrl, visitedLinksIds)
       .then((validUrl) => {
         getNewPosts(watchedState);
-        visitedLinksIds.add(validUrl);
-        const feedId = visitedLinksIds.size;
         getAxiosResponse(validUrl).then((response) => {
           try {
             const { posts, feed } = parser(response.data.contents);
+            visitedLinksIds.add(validUrl);
+            const feedId = visitedLinksIds.size;
             createPosts(initialState, posts, feedId);
             initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
             initialState.valid = true;
             watchedState.process.processState = 'finished';
           } catch (e) {
-            console.log(e.message);
             initialState.valid = false;
             initialState.process.error = e;
             watchedState.process.processState = 'finished';

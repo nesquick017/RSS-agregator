@@ -99,7 +99,6 @@ const renderFeedback = (elements, state, i18nextInstance) => {
       feedbackEl.textContent = i18nextInstance.t(
         state.process.error.type || state.process.error.message,
       );
-      console.log(state.process.error.type);
       break;
     }
     default: {
