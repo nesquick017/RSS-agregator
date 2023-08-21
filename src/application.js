@@ -93,10 +93,11 @@ const app = (i18nInstance) => {
             createPosts(initialState, posts, feedId);
             initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
             initialState.valid = true;
-            watchedState.process.processState = 'fihished';
           } catch (e) {
-            console.log(i18nInstance.t(e));
+            initialState.valid = false;
           }
+          console.log(initialState);
+          watchedState.process.processState = 'fihished';
         });
       })
       .catch((e) => {
