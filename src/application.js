@@ -88,11 +88,15 @@ const app = (i18nInstance) => {
         visitedLinksIds.add(validUrl);
         const feedId = visitedLinksIds.size;
         getAxiosResponse(validUrl).then((response) => {
-          const { posts, feed } = parser(response.data.contents);
-          createPosts(initialState, posts, feedId);
-          initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
-          initialState.valid = true;
-          watchedState.process.processState = 'fihished';
+          try {
+            const { posts, feed } = parser(response.data.contents);
+            createPosts(initialState, posts, feedId);
+            initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
+            initialState.valid = true;
+            watchedState.process.processState = 'fihished';
+          } catch (e) {
+            console.log(i18nInstance.t(e));
+          }
         });
       })
       .catch((e) => {
