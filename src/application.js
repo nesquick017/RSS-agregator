@@ -12,7 +12,6 @@ import resources from './locales/index.js';
 
 const app = (i18nInstance) => {
   const initialState = {
-    activeLanguage: 'ru',
     valid: true,
     inputValue: '',
     process: {
@@ -65,7 +64,7 @@ const app = (i18nInstance) => {
     );
 
     Promise.allSettled(promises).finally(() => {
-      setTimeout(() => getNewPosts(state), 600);
+      setTimeout(() => getNewPosts(state), 5000);
     });
   };
 
@@ -80,22 +79,29 @@ const app = (i18nInstance) => {
     const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
     const currentUrl = input.value;
     const { visitedLinksIds } = initialState.uiState;
-    const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
     validate(currentUrl, visitedLinksIds)
       .then((validUrl) => {
-        const feedId = visitedLinksIds.size;
+        const watchedState = onChange(initialState, () =>
+          render(elements, initialState, i18nInstance),
+        );
+        getNewPosts(watchedState);
         visitedLinksIds.add(validUrl);
+        const feedId = visitedLinksIds.size;
         getAxiosResponse(validUrl).then((response) => {
-          const { feed } = parser(response.data.contents);
-          initialState.content.feeds.push({ feed, feedId, link: validUrl });
+          const { posts, feed } = parser(response.data.contents);
+          createPosts(initialState, posts, feedId);
+          initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
           initialState.valid = true;
-          watchedState.process.value = validUrl;
-          getNewPosts(watchedState);
+          watchedState.process.processState = 'fihished';
         });
       })
       .catch((e) => {
         initialState.valid = false;
-        watchedState.process.error = e;
+        initialState.process.error = e;
+        const watchedState = onChange(initialState, () =>
+          render(elements, initialState, i18nInstance),
+        );
+        watchedState.process.processState = 'fihished';
       });
   });
 };
