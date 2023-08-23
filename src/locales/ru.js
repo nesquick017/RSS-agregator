@@ -1,7 +1,7 @@
 export default {
   translation: {
-    parseError: 'Ресурс не содержит RSS контент.',
-    submit: 'Rss успешно добавлен',
+    parseError: 'Ресурс не содержит валидный RSS.',
+    submit: 'RSS успешно загружен',
     url: 'Ссылка должна быть валидным URL',
     rss: 'Ресурс не содержит валидный RSS',
     notOneOf: 'RSS уже существует',
