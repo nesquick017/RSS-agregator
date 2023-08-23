@@ -1,3 +1,4 @@
+/* eslint-disable consistent-return */
 /* eslint-disable no-shadow */
 /* eslint-disable object-curly-newline */
 /* eslint-disable function-paren-newline */
@@ -26,7 +27,6 @@ const app = (i18nInstance) => {
     uiState: {
       visitedLinksIds: new Set(),
       modalId: '',
-      clicksCounter: 0,
     },
   };
 
@@ -88,21 +88,40 @@ const app = (i18nInstance) => {
     validate(currentUrl, feedLinks)
       .then((validUrl) => {
         getNewPosts(watchedState);
-        getAxiosResponse(validUrl).then((response) => {
-          try {
-            const { posts, feed } = parser(response.data.contents);
-            const feedId = _.uniqueId();
-            createPosts(initialState, posts, feedId);
-            initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
-            initialState.valid = true;
-            watchedState.process.processState = 'finished';
-            console.log(initialState.content);
-          } catch (e) {
-            initialState.valid = false;
-            initialState.process.error = e;
-            watchedState.process.processState = 'finished';
-          }
-        });
+        getAxiosResponse(validUrl)
+          .then((response) => {
+            try {
+              const { posts, feed } = parser(response.data.contents);
+              const feedId = _.uniqueId();
+              createPosts(initialState, posts, feedId);
+              initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
+              initialState.valid = true;
+              watchedState.process.processState = 'finished';
+              const postLinks = postSection.querySelectorAll('li');
+              return postLinks;
+            } catch (e) {
+              initialState.valid = false;
+              initialState.process.error = e;
+              watchedState.process.processState = 'finished';
+            }
+          })
+          .then((posts) => {
+            posts.forEach((post) => {
+              post.childNodes.forEach((postChild) => {
+                postChild.addEventListener('click', () => {
+                  const id = postChild.getAttribute('data-id');
+                  const watchedPosts = onChange(initialState.uiState.visitedLinksIds, () => {
+                    const currentElements = document.querySelectorAll(`[data-id="${id}"]`);
+                    currentElements.forEach((element) => {
+                      element.classList.remove('fw-bold');
+                      element.classList.add('fw-normal');
+                    });
+                  });
+                  watchedPosts.add(id);
+                });
+              });
+            });
+          });
       })
       .catch((e) => {
         initialState.valid = false;

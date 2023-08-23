@@ -3,7 +3,7 @@
 const renderPosts = (state, modalWindow) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
-    const { title, link, description } = post;
+    const { title, link, description, id } = post;
 
     const newPost = document.createElement('li');
     newPost.classList.add(
@@ -18,7 +18,7 @@ const renderPosts = (state, modalWindow) => {
     newPostLink.textContent = title;
     newPostLink.classList.add('fw-bold');
     newPost.classList.add('fw-bold');
-    newPostLink.setAttribute('data-id', 2);
+    newPostLink.setAttribute('data-id', id);
     newPostLink.setAttribute('target', '_blank');
     newPostLink.setAttribute('rel', 'noopener noreferrer');
     newPostLink.setAttribute('href', link);
@@ -26,7 +26,7 @@ const renderPosts = (state, modalWindow) => {
     const newPostButton = document.createElement('button');
     newPostButton.setAttribute('type', 'button');
     newPostButton.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-    newPostButton.setAttribute('data-id', '2');
+    newPostButton.setAttribute('data-id', id);
     newPostButton.setAttribute('data-bs-toggle', 'modal');
     newPostButton.setAttribute('data-bs-target', '#modal');
     newPostButton.textContent = 'Просмотр';
@@ -43,11 +43,6 @@ const renderPosts = (state, modalWindow) => {
     });
 
     newPost.append(newPostLink, newPostButton);
-    newPost.addEventListener('click', () => {
-      state.uiState.visitedLinksIds.add(post.id);
-      newPostLink.classList.remove('fw-bold');
-      newPostLink.classList.add('fw-normal');
-    });
     return newPost;
   });
 
@@ -115,12 +110,13 @@ const renderFeedback = (elements, state, i18nextInstance) => {
 };
 
 export default (elements, state, i18nextInstance) => {
+  if (state.uiState.visitedLinksIds.size > 1) console.log(state.uiState.visitedLinksIds);
   state.process.processState = 'filling';
   renderFeedback(elements, state, i18nextInstance);
   const { feedSection, postSection, modalWindow } = elements;
 
   if (state.valid) {
-    const firstRound = state.content.feeds.length === 1;
+    const firstRound = feedSection.childNodes.length === 0;
 
     if (firstRound) {
       const feedsBlock = buildContentBlock('Фиды');
@@ -128,6 +124,7 @@ export default (elements, state, i18nextInstance) => {
       const postsBlock = buildContentBlock('Посты');
       postSection.append(postsBlock);
     }
+
     const feedsList = feedSection.querySelector('ul');
     const postsList = postSection.querySelector('ul');
 
