@@ -114,7 +114,7 @@ const app = (i18nInstance) => {
                     const currentElements = document.querySelectorAll(`[data-id="${id}"]`);
                     currentElements.forEach((element) => {
                       element.classList.remove('fw-bold');
-                      element.classList.add('fw-normal');
+                      element.classList.add('fw-normal', 'link-secondary');
                     });
                   });
                   watchedPosts.add(id);
