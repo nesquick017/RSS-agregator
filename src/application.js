@@ -6,6 +6,7 @@ import i18next from 'i18next';
 import onChange from 'on-change';
 import * as yup from 'yup';
 import axios from 'axios';
+import _ from 'lodash';
 import render from './render.js';
 import parser from './rssParser.js';
 import resources from './locales/index.js';
@@ -25,6 +26,7 @@ const app = (i18nInstance) => {
     uiState: {
       visitedLinksIds: new Set(),
       modalId: '',
+      clicksCounter: 0,
     },
   };
 
@@ -43,7 +45,9 @@ const app = (i18nInstance) => {
 
   const createPosts = (state, newPosts, feedId) => {
     newPosts.forEach((post) => {
-      post.feeId = feedId;
+      post.feedId = feedId;
+      post.id = _.uniqueId();
+      post.readOut = false;
     });
     state.content.posts.push(...newPosts);
   };
@@ -68,30 +72,31 @@ const app = (i18nInstance) => {
     });
   };
 
+  const feedSection = document.querySelector('.feeds');
+  const postSection = document.querySelector('.posts');
+  const modalWindow = document.querySelector('.modal-content');
+  const feedbackEl = document.querySelector('.feedback');
   const rssForm = document.querySelector('.rss-form');
+  const input = rssForm.querySelector('#url-input');
+  const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
+
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const input = rssForm.querySelector('#url-input');
-    const feedSection = document.querySelector('.feeds');
-    const postSection = document.querySelector('.posts');
-    const modalWindow = document.querySelector('.modal-content');
-    const feedbackEl = document.querySelector('.feedback');
-    const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
     const currentUrl = input.value;
-    const { visitedLinksIds } = initialState.uiState;
     const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
-    validate(currentUrl, visitedLinksIds)
+    const feedLinks = initialState.content.feeds.map((feed) => feed.link);
+    validate(currentUrl, feedLinks)
       .then((validUrl) => {
         getNewPosts(watchedState);
         getAxiosResponse(validUrl).then((response) => {
           try {
             const { posts, feed } = parser(response.data.contents);
-            visitedLinksIds.add(validUrl);
-            const feedId = visitedLinksIds.size;
+            const feedId = _.uniqueId();
             createPosts(initialState, posts, feedId);
             initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
             initialState.valid = true;
             watchedState.process.processState = 'finished';
+            console.log(initialState.content);
           } catch (e) {
             initialState.valid = false;
             initialState.process.error = e;

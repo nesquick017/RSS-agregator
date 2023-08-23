@@ -1,6 +1,6 @@
 /* eslint-disable object-curly-newline */
 
-const buildPostsContent = (state, modalWindow) => {
+const renderPosts = (state, modalWindow) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
     const { title, link, description } = post;
@@ -14,10 +14,10 @@ const buildPostsContent = (state, modalWindow) => {
       'border-0',
       'border-end-0',
     );
-
     const newPostLink = document.createElement('a');
     newPostLink.textContent = title;
     newPostLink.classList.add('fw-bold');
+    newPost.classList.add('fw-bold');
     newPostLink.setAttribute('data-id', 2);
     newPostLink.setAttribute('target', '_blank');
     newPostLink.setAttribute('rel', 'noopener noreferrer');
@@ -43,12 +43,18 @@ const buildPostsContent = (state, modalWindow) => {
     });
 
     newPost.append(newPostLink, newPostButton);
+    newPost.addEventListener('click', () => {
+      state.uiState.visitedLinksIds.add(post.id);
+      newPostLink.classList.remove('fw-bold');
+      newPostLink.classList.add('fw-normal');
+    });
     return newPost;
   });
+
   return content;
 };
 
-const buildFeedsContent = (state) => {
+const renderFeeds = (state) => {
   const { feeds } = state.content;
   const newFeeds = feeds.map((feed) => {
     const { title, description } = feed;
@@ -125,10 +131,10 @@ export default (elements, state, i18nextInstance) => {
     const feedsList = feedSection.querySelector('ul');
     const postsList = postSection.querySelector('ul');
 
-    const posts = buildPostsContent(state, modalWindow);
+    const posts = renderPosts(state, modalWindow);
     postsList.replaceChildren(...posts);
 
-    const feeds = buildFeedsContent(state);
+    const feeds = renderFeeds(state);
     feedsList.replaceChildren(...feeds);
   }
 };
