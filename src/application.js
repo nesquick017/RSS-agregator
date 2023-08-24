@@ -14,7 +14,7 @@ import resources from './locales/index.js';
 
 const app = (i18nInstance) => {
   const initialState = {
-    valid: true,
+    valid: false,
     inputValue: '',
     process: {
       processState: 'filling',
@@ -26,7 +26,6 @@ const app = (i18nInstance) => {
     },
     uiState: {
       visitedLinksIds: new Set(),
-      modalId: '',
     },
   };
 
@@ -79,55 +78,43 @@ const app = (i18nInstance) => {
   const rssForm = document.querySelector('.rss-form');
   const input = rssForm.querySelector('#url-input');
   const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
+  const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
+  getNewPosts(watchedState);
 
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const currentUrl = input.value;
-    const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
     const feedLinks = initialState.content.feeds.map((feed) => feed.link);
+    watchedState.process.processState = 'submitted';
     validate(currentUrl, feedLinks)
       .then((validUrl) => {
-        getNewPosts(watchedState);
-        getAxiosResponse(validUrl)
-          .then((response) => {
-            try {
-              const { posts, feed } = parser(response.data.contents);
-              const feedId = _.uniqueId();
-              createPosts(initialState, posts, feedId);
-              initialState.content.feeds.push({ ...feed, feedId, link: validUrl });
-              initialState.valid = true;
-              watchedState.process.processState = 'finished';
-              const postLinks = postSection.querySelectorAll('li');
-              return postLinks;
-            } catch (e) {
-              initialState.valid = false;
-              initialState.process.error = e;
-              watchedState.process.processState = 'finished';
-            }
-          })
-          .then((posts) => {
-            posts.forEach((post) => {
-              post.childNodes.forEach((postChild) => {
-                postChild.addEventListener('click', () => {
-                  const id = postChild.getAttribute('data-id');
-                  const watchedPosts = onChange(initialState.uiState.visitedLinksIds, () => {
-                    const currentElements = document.querySelectorAll(`[data-id="${id}"]`);
-                    currentElements.forEach((element) => {
-                      element.classList.remove('fw-bold');
-                      element.classList.add('fw-normal', 'link-secondary');
-                    });
-                  });
-                  watchedPosts.add(id);
-                });
-              });
-            });
-          });
+        getAxiosResponse(validUrl).then((response) => {
+          try {
+            const { posts, feed } = parser(response.data.contents);
+            const feedId = _.uniqueId();
+            createPosts(initialState, posts, feedId);
+            watchedState.valid = true;
+            watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
+            watchedState.process.processState = 'finished';
+          } catch (e) {
+            watchedState.valid = false;
+            watchedState.process.error = e;
+            watchedState.process.processState = 'finished';
+          }
+        });
       })
       .catch((e) => {
-        initialState.valid = false;
-        initialState.process.error = e;
+        watchedState.valid = false;
+        watchedState.process.error = e;
         watchedState.process.processState = 'finished';
       });
+  });
+
+  postSection.addEventListener('click', (e) => {
+    const id = e.target.getAttribute('data-id');
+    if (id) {
+      watchedState.uiState.visitedLinksIds.add(id);
+    }
   });
 };
 
