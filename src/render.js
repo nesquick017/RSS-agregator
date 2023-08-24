@@ -110,8 +110,6 @@ const renderFeedback = (elements, state, i18nextInstance) => {
 };
 
 export default (elements, state, i18nextInstance) => {
-  if (state.uiState.visitedLinksIds.size > 1) console.log(state.uiState.visitedLinksIds);
-  state.process.processState = 'filling';
   renderFeedback(elements, state, i18nextInstance);
   const { feedSection, postSection, modalWindow } = elements;
 
@@ -133,5 +131,27 @@ export default (elements, state, i18nextInstance) => {
 
     const feeds = renderFeeds(state);
     feedsList.replaceChildren(...feeds);
+  }
+
+  state.uiState.visitedLinksIds.forEach((id) => {
+    const visitedLink = document.querySelector(`a[data-id="${id}"]`);
+    visitedLink.classList.remove('fw-bold');
+    visitedLink.classList.add('fw-normal', 'link-secondary');
+  });
+
+  const submitButton = document.querySelector('button[type="submit"]');
+
+  switch (state.process.processState) {
+    case 'submitted': {
+      submitButton.classList.add('disabled');
+      break;
+    }
+    case 'finished': {
+      submitButton.classList.remove('disabled');
+      break;
+    }
+    default: {
+      throw new Error('wrong button state');
+    }
   }
 };
