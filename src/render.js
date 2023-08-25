@@ -85,7 +85,6 @@ const buildContentBlock = (blockName) => {
 const getFeedback = (state, i18nextInstance) => {
   const { error } = state.process;
   if (error) {
-    console.log(error);
     const feedbackText = i18nextInstance.t(error.type || error.message);
     return feedbackText;
   }

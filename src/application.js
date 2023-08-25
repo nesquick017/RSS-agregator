@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable consistent-return */
 /* eslint-disable no-shadow */
 /* eslint-disable object-curly-newline */
@@ -34,7 +35,9 @@ const app = (i18nInstance) => {
     const newUrl = new URL(allOrigins);
     newUrl.searchParams.set('url', url);
     newUrl.searchParams.set('disableCache', 'true');
-    return axios.get(newUrl);
+    return axios.get(newUrl).catch((e) => {
+      throw new Error('networkError');
+    });
   };
 
   const validate = (url, urlList) => {
@@ -86,27 +89,20 @@ const app = (i18nInstance) => {
     watchedState.process.value = currentUrl;
     const feedLinks = initialState.content.feeds.map((feed) => feed.link);
     validate(currentUrl, feedLinks)
-      .then((validUrl) => {
+      .then((validUrl) =>
         getAxiosResponse(validUrl).then((response) => {
-          try {
-            watchedState.valid = true;
-            const { posts, feed } = parser(response.data.contents);
-            const feedId = _.uniqueId();
-            createPosts(initialState, posts, feedId);
-            watchedState.process.error = '';
-            watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
-            watchedState.process.processState = 'finished';
-          } catch (parserError) {
-            watchedState.valid = false;
-            watchedState.process.error = parserError;
-            watchedState.process.processState = 'finished';
-          }
-        });
-      })
-      .catch((validationError) => {
-        console.log(validationError);
+          watchedState.valid = true;
+          const { posts, feed } = parser(response.data.contents);
+          const feedId = _.uniqueId();
+          createPosts(initialState, posts, feedId);
+          watchedState.process.error = '';
+          watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
+          watchedState.process.processState = 'finished';
+        }),
+      )
+      .catch((error) => {
         watchedState.valid = false;
-        watchedState.process.error = validationError;
+        watchedState.process.error = error;
         watchedState.process.processState = 'finished';
       });
   });
