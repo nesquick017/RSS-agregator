@@ -82,38 +82,38 @@ const buildContentBlock = (blockName) => {
   return contentBlock;
 };
 
-const renderFeedback = (elements, state, i18nextInstance) => {
-  const { feedbackEl, input } = elements;
-  const { valid } = state;
-  switch (valid) {
-    case true: {
-      feedbackEl.classList.remove('is-invalid', 'text-danger');
-      feedbackEl.classList.add('text-success');
-      feedbackEl.textContent = i18nextInstance.t('submit');
-      input.value = '';
-      input.focus();
-      break;
-    }
-    case false: {
-      feedbackEl.classList.add('is-invalid', 'text-danger');
-      feedbackEl.classList.remove('text-success');
-      feedbackEl.textContent = i18nextInstance.t(
-        state.process.error.type || state.process.error.message,
-      );
-      break;
-    }
-    default: {
-      console.log('error with validation value');
-      break;
-    }
+const getFeedback = (state, i18nextInstance) => {
+  const { error } = state.process;
+  if (error) {
+    console.log(error);
+    const feedbackText = i18nextInstance.t(error.type || error.message);
+    return feedbackText;
+  }
+  const feedbackText = i18nextInstance.t('submit');
+  return feedbackText;
+};
+
+const renderButton = (state) => {
+  const submitButton = document.querySelector('button[type="submit"]');
+  const { processState } = state.process;
+  if (processState === 'submitted') {
+    submitButton.classList.add('disabled');
+  } else {
+    submitButton.classList.remove('disabled');
   }
 };
 
 export default (elements, state, i18nextInstance) => {
-  renderFeedback(elements, state, i18nextInstance);
-  const { feedSection, postSection, modalWindow } = elements;
-
+  const { input, feedbackEl, feedSection, postSection, modalWindow } = elements;
+  renderButton(state);
+  const feedbackText = getFeedback(state, i18nextInstance);
   if (state.valid) {
+    feedbackEl.classList.remove('is-invalid', 'text-danger');
+    feedbackEl.classList.add('text-success');
+    feedbackEl.textContent = feedbackText;
+    input.textContent = '';
+    input.focus();
+
     const firstRound = feedSection.childNodes.length === 0;
 
     if (firstRound) {
@@ -131,6 +131,12 @@ export default (elements, state, i18nextInstance) => {
 
     const feeds = renderFeeds(state);
     feedsList.replaceChildren(...feeds);
+  } else {
+    feedbackEl.classList.remove('text-success');
+    feedbackEl.classList.add('is-invalid', 'text-danger');
+    feedbackEl.textContent = feedbackText;
+    input.textContent = '';
+    input.focus();
   }
 
   state.uiState.visitedLinksIds.forEach((id) => {
@@ -138,20 +144,4 @@ export default (elements, state, i18nextInstance) => {
     visitedLink.classList.remove('fw-bold');
     visitedLink.classList.add('fw-normal', 'link-secondary');
   });
-
-  const submitButton = document.querySelector('button[type="submit"]');
-
-  switch (state.process.processState) {
-    case 'submitted': {
-      submitButton.classList.add('disabled');
-      break;
-    }
-    case 'finished': {
-      submitButton.classList.remove('disabled');
-      break;
-    }
-    default: {
-      throw new Error('wrong button state');
-    }
-  }
 };

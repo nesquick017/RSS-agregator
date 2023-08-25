@@ -53,17 +53,15 @@ const app = (i18nInstance) => {
 
   const getNewPosts = (state) => {
     const promises = state.content.feeds.map(({ link, feedId }) =>
-      getAxiosResponse(link)
-        .then((response) => {
-          const { posts } = parser(response.data.contents);
-          const addedPosts = state.content.posts.map((post) => post.link);
-          const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
-          if (newPosts.length > 0) {
-            createPosts(state, newPosts, feedId);
-          }
-          return Promise.resolve();
-        })
-        .catch((e) => console.log(e)),
+      getAxiosResponse(link).then((response) => {
+        const { posts } = parser(response.data.contents);
+        const addedPosts = state.content.posts.map((post) => post.link);
+        const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
+        if (newPosts.length > 0) {
+          createPosts(state, newPosts, feedId);
+        }
+        return Promise.resolve();
+      }),
     );
 
     Promise.allSettled(promises).finally(() => {
@@ -94,18 +92,19 @@ const app = (i18nInstance) => {
             const feedId = _.uniqueId();
             createPosts(initialState, posts, feedId);
             watchedState.valid = true;
+            watchedState.process.error = '';
             watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
             watchedState.process.processState = 'finished';
-          } catch (e) {
+          } catch (parserError) {
             watchedState.valid = false;
-            watchedState.process.error = e;
+            watchedState.process.error = parserError;
             watchedState.process.processState = 'finished';
           }
         });
       })
-      .catch((e) => {
+      .catch((validationError) => {
         watchedState.valid = false;
-        watchedState.process.error = e;
+        watchedState.process.error = validationError;
         watchedState.process.processState = 'finished';
       });
   });
