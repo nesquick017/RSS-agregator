@@ -81,17 +81,18 @@ const app = (i18nInstance) => {
 
   rssForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    watchedState.process.processState = 'validation';
     const currentUrl = input.value;
+    watchedState.process.value = currentUrl;
     const feedLinks = initialState.content.feeds.map((feed) => feed.link);
-    watchedState.process.processState = 'submitted';
     validate(currentUrl, feedLinks)
       .then((validUrl) => {
         getAxiosResponse(validUrl).then((response) => {
           try {
+            watchedState.valid = true;
             const { posts, feed } = parser(response.data.contents);
             const feedId = _.uniqueId();
             createPosts(initialState, posts, feedId);
-            watchedState.valid = true;
             watchedState.process.error = '';
             watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
             watchedState.process.processState = 'finished';
@@ -103,6 +104,7 @@ const app = (i18nInstance) => {
         });
       })
       .catch((validationError) => {
+        console.log(validationError);
         watchedState.valid = false;
         watchedState.process.error = validationError;
         watchedState.process.processState = 'finished';

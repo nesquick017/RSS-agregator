@@ -96,7 +96,7 @@ const getFeedback = (state, i18nextInstance) => {
 const renderButton = (state) => {
   const submitButton = document.querySelector('button[type="submit"]');
   const { processState } = state.process;
-  if (processState === 'submitted') {
+  if (processState !== 'finished') {
     submitButton.classList.add('disabled');
   } else {
     submitButton.classList.remove('disabled');
@@ -104,8 +104,9 @@ const renderButton = (state) => {
 };
 
 export default (elements, state, i18nextInstance) => {
-  const { input, feedbackEl, feedSection, postSection, modalWindow } = elements;
   renderButton(state);
+  if (state.process.processState === 'validation') return;
+  const { input, feedbackEl, feedSection, postSection, modalWindow } = elements;
   const feedbackText = getFeedback(state, i18nextInstance);
   if (state.valid) {
     feedbackEl.classList.remove('is-invalid', 'text-danger');
