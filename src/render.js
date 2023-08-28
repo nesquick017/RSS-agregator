@@ -135,14 +135,14 @@ export default (elements, state, i18nextInstance, path) => {
         postSection.append(postsBlock);
       }
       const postsList = postSection.querySelector('ul');
-      const posts = renderPosts(state, modalWindow);
-      postsList.replaceChildren(...posts);
+      const view = renderPosts(state, modalWindow);
+      postsList.replaceChildren(...view);
       break;
     }
     case 'content.feeds': {
       const feedsList = feedSection.querySelector('ul');
-      const feeds = renderFeeds(state);
-      feedsList.replaceChildren(...feeds);
+      const view = renderFeeds(state);
+      feedsList.replaceChildren(...view);
       break;
     }
     case 'uiState.visitedLinksIds': {
