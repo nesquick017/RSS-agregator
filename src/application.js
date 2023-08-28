@@ -30,14 +30,20 @@ const app = (i18nInstance) => {
     },
   };
 
+  const feedSection = document.querySelector('.feeds');
+  const postSection = document.querySelector('.posts');
+  const modalWindow = document.querySelector('.modal-content');
+  const feedbackEl = document.querySelector('.feedback');
+  const rssForm = document.querySelector('.rss-form');
+  const input = rssForm.querySelector('#url-input');
+  const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
+
   const getAxiosResponse = (url) => {
     const allOrigins = 'https://allorigins.hexlet.app/get';
     const newUrl = new URL(allOrigins);
     newUrl.searchParams.set('url', url);
     newUrl.searchParams.set('disableCache', 'true');
-    return axios.get(newUrl).catch((e) => {
-      throw new Error('networkError');
-    });
+    return axios.get(newUrl);
   };
 
   const validate = (url, urlList) => {
@@ -72,14 +78,9 @@ const app = (i18nInstance) => {
     });
   };
 
-  const feedSection = document.querySelector('.feeds');
-  const postSection = document.querySelector('.posts');
-  const modalWindow = document.querySelector('.modal-content');
-  const feedbackEl = document.querySelector('.feedback');
-  const rssForm = document.querySelector('.rss-form');
-  const input = rssForm.querySelector('#url-input');
-  const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
-  const watchedState = onChange(initialState, () => render(elements, initialState, i18nInstance));
+  const watchedState = onChange(initialState, (path, value) =>
+    render(elements, initialState, i18nInstance, path, value),
+  );
   getNewPosts(watchedState);
 
   rssForm.addEventListener('submit', (e) => {
@@ -89,17 +90,20 @@ const app = (i18nInstance) => {
     watchedState.process.value = currentUrl;
     const feedLinks = initialState.content.feeds.map((feed) => feed.link);
     validate(currentUrl, feedLinks)
-      .then((validUrl) =>
-        getAxiosResponse(validUrl).then((response) => {
-          watchedState.valid = true;
-          const { posts, feed } = parser(response.data.contents);
-          const feedId = _.uniqueId();
-          createPosts(initialState, posts, feedId);
-          watchedState.process.error = '';
-          watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
-          watchedState.process.processState = 'finished';
-        }),
-      )
+      .then((validUrl) => {
+        watchedState.process.value = validUrl;
+        return getAxiosResponse(validUrl);
+      })
+      .then((response) => {
+        const { posts, feed } = parser(response.data.contents);
+        const feedId = _.uniqueId();
+        createPosts(watchedState, posts, feedId);
+        const validUrl = watchedState.process.value;
+        watchedState.valid = true;
+        watchedState.process.error = null;
+        watchedState.content.feeds.push({ ...feed, feedId, link: validUrl });
+        watchedState.process.processState = 'finished';
+      })
       .catch((error) => {
         watchedState.valid = false;
         watchedState.process.error = error;

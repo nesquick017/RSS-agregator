@@ -85,63 +85,79 @@ const buildContentBlock = (blockName) => {
 const getFeedback = (state, i18nextInstance) => {
   const { error } = state.process;
   if (error) {
-    const feedbackText = i18nextInstance.t(error.type || error.message);
+    const messageValue = error.type || error.code || error.message;
+    const feedbackText = i18nextInstance.t(messageValue);
     return feedbackText;
   }
-  const feedbackText = i18nextInstance.t('submit');
-  return feedbackText;
+  return i18nextInstance.t('submit');
 };
 
 const renderButton = (state) => {
   const submitButton = document.querySelector('button[type="submit"]');
-  const { processState } = state.process;
-  if (processState !== 'finished') {
+  if (state.process.processState !== 'finished') {
     submitButton.classList.add('disabled');
   } else {
     submitButton.classList.remove('disabled');
   }
 };
 
-export default (elements, state, i18nextInstance) => {
-  renderButton(state);
-  if (state.process.processState === 'validation') return;
+export default (elements, state, i18nextInstance, path) => {
   const { input, feedbackEl, feedSection, postSection, modalWindow } = elements;
-  const feedbackText = getFeedback(state, i18nextInstance);
-  if (state.valid) {
-    feedbackEl.classList.remove('is-invalid', 'text-danger');
-    feedbackEl.classList.add('text-success');
-    feedbackEl.textContent = feedbackText;
-    input.textContent = '';
-    input.focus();
-
-    const firstRound = feedSection.childNodes.length === 0;
-
-    if (firstRound) {
-      const feedsBlock = buildContentBlock('Фиды');
-      feedSection.append(feedsBlock);
-      const postsBlock = buildContentBlock('Посты');
-      postSection.append(postsBlock);
+  const { valid } = state;
+  switch (path) {
+    case 'process.processState': {
+      renderButton(state);
+      break;
     }
-
-    const feedsList = feedSection.querySelector('ul');
-    const postsList = postSection.querySelector('ul');
-
-    const posts = renderPosts(state, modalWindow);
-    postsList.replaceChildren(...posts);
-
-    const feeds = renderFeeds(state);
-    feedsList.replaceChildren(...feeds);
-  } else {
-    feedbackEl.classList.remove('text-success');
-    feedbackEl.classList.add('is-invalid', 'text-danger');
-    feedbackEl.textContent = feedbackText;
-    input.textContent = '';
-    input.focus();
+    case 'valid': {
+      input.value = '';
+      input.focus();
+      break;
+    }
+    case 'process.error': {
+      const feedbackText = getFeedback(state, i18nextInstance);
+      if (valid) {
+        feedbackEl.classList.remove('is-invalid', 'text-danger');
+        feedbackEl.classList.add('text-success');
+      } else {
+        feedbackEl.classList.remove('text-success');
+        feedbackEl.classList.add('is-invalid', 'text-danger');
+      }
+      feedbackEl.textContent = feedbackText;
+      break;
+    }
+    case 'content.posts': {
+      const firstRound = feedSection.childNodes.length === 0;
+      if (firstRound) {
+        const feedsBlock = buildContentBlock('Фиды');
+        feedSection.append(feedsBlock);
+        const postsBlock = buildContentBlock('Посты');
+        postSection.append(postsBlock);
+      }
+      const postsList = postSection.querySelector('ul');
+      const posts = renderPosts(state, modalWindow);
+      postsList.replaceChildren(...posts);
+      break;
+    }
+    case 'content.feeds': {
+      const feedsList = feedSection.querySelector('ul');
+      const feeds = renderFeeds(state);
+      feedsList.replaceChildren(...feeds);
+      break;
+    }
+    case 'uiState.visitedLinksIds': {
+      state.uiState.visitedLinksIds.forEach((id) => {
+        const visitedLink = document.querySelector(`a[data-id="${id}"]`);
+        visitedLink.classList.remove('fw-bold');
+        visitedLink.classList.add('fw-normal', 'link-secondary');
+      });
+      break;
+    }
+    case 'process.value': {
+      break;
+    }
+    default: {
+      throw new Error('Unexpected changes in state!');
+    }
   }
-
-  state.uiState.visitedLinksIds.forEach((id) => {
-    const visitedLink = document.querySelector(`a[data-id="${id}"]`);
-    visitedLink.classList.remove('fw-bold');
-    visitedLink.classList.add('fw-normal', 'link-secondary');
-  });
 };

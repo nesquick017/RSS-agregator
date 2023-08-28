@@ -1,6 +1,6 @@
 export default {
   translation: {
-    networkError: 'Ошибка сети',
+    ERR_NETWORK: 'Ошибка сети',
     parseError: 'Ресурс не содержит валидный RSS.',
     submit: 'RSS успешно загружен',
     url: 'Ссылка должна быть валидным URL',
