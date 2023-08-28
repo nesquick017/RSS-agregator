@@ -58,7 +58,8 @@ export default () => {
       };
 
       const validate = (url, urlList) => {
-        const schema = yup.string().trim().required().url().notOneOf(urlList);
+        const schema = yup.string().trim().required().url()
+          .notOneOf(urlList);
         return schema.validate(url);
       };
 
@@ -72,26 +73,22 @@ export default () => {
       };
 
       const getNewPosts = (state) => {
-        const promises = state.content.feeds.map(({ link, feedId }) =>
-          getAxiosResponse(link).then((response) => {
-            const { posts } = parser(response.data.contents);
-            const addedPosts = state.content.posts.map((post) => post.link);
-            const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
-            if (newPosts.length > 0) {
-              createPosts(state, newPosts, feedId);
-            }
-            return Promise.resolve();
-          }),
-        );
+        const promises = state.content.feeds.map(({ link, feedId }) => getAxiosResponse(link).then((response) => {
+          const { posts } = parser(response.data.contents);
+          const addedPosts = state.content.posts.map((post) => post.link);
+          const newPosts = posts.filter((post) => !addedPosts.includes(post.link));
+          if (newPosts.length > 0) {
+            createPosts(state, newPosts, feedId);
+          }
+          return Promise.resolve();
+        }));
 
         Promise.allSettled(promises).finally(() => {
           setTimeout(() => getNewPosts(state), 5000);
         });
       };
 
-      const watchedState = onChange(initialState, (path, value) =>
-        render(elements, initialState, i18nextInstance, path, value),
-      );
+      const watchedState = onChange(initialState, (path, value) => render(elements, initialState, i18nextInstance, path, value));
       getNewPosts(watchedState);
 
       yup.setLocale({
