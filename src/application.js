@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import i18next from 'i18next';
 import onChange from 'on-change';
 import * as yup from 'yup';
@@ -41,7 +42,11 @@ export default () => {
       const rssForm = document.querySelector('.rss-form');
       const input = rssForm.querySelector('#url-input');
       const elements = {
-        input, feedbackEl, feedSection, postSection, modalWindow,
+        input,
+        feedbackEl,
+        feedSection,
+        postSection,
+        modalWindow,
       };
 
       const getAxiosResponse = (url) => {
@@ -53,8 +58,7 @@ export default () => {
       };
 
       const validate = (url, urlList) => {
-        const schema = yup.string().trim().required().url()
-          .notOneOf(urlList);
+        const schema = yup.string().trim().required().url().notOneOf(urlList);
         return schema.validate(url);
       };
 
@@ -77,7 +81,8 @@ export default () => {
               createPosts(state, newPosts, feedId);
             }
             return Promise.resolve();
-          }));
+          }),
+        );
 
         Promise.allSettled(promises).finally(() => {
           setTimeout(() => getNewPosts(state), 5000);
@@ -85,7 +90,8 @@ export default () => {
       };
 
       const watchedState = onChange(initialState, (path, value) =>
-        render(elements, initialState, i18nextInstance, path, value));
+        render(elements, initialState, i18nextInstance, path, value),
+      );
       getNewPosts(watchedState);
 
       yup.setLocale({
