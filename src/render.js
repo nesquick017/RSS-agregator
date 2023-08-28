@@ -1,5 +1,3 @@
-/* eslint-disable object-curly-newline */
-
 const renderPosts = (state, modalWindow) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
