@@ -13,11 +13,13 @@ import render from './render.js';
 import parser from './rssParser.js';
 import resources from './locales/index.js';
 
+const defaultLanguage = 'ru';
+
 export default () => {
   const i18nextInstance = i18next.createInstance();
   i18nextInstance
     .init({
-      lng: 'ru',
+      lng: defaultLanguage,
       debug: true,
       resources,
     })
@@ -91,6 +93,11 @@ export default () => {
       );
       getNewPosts(watchedState);
 
+      yup.setLocale({
+        mixed: { notOneOf: 'doubleRss' },
+        string: { url: 'invalidUrl' },
+      });
+
       rssForm.addEventListener('submit', (e) => {
         e.preventDefault();
         watchedState.process.processState = 'validation';
@@ -127,9 +134,3 @@ export default () => {
       });
     });
 };
-
-// export default () => {
-//   const i18nextInstance = i18next.createInstance();
-//   i18nextInstance.init({ lng: 'ru', resources });
-//   app(i18nextInstance);
-// };
