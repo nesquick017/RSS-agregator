@@ -1,7 +1,9 @@
 const renderPosts = (state, modalWindow) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
-    const { title, link, description, id } = post;
+    const {
+      title, link, description, id,
+    } = post;
 
     const newPost = document.createElement('li');
     newPost.classList.add(
@@ -100,7 +102,9 @@ const renderButton = (state) => {
 };
 
 export default (elements, state, i18nextInstance, path) => {
-  const { input, feedbackEl, feedSection, postSection, modalWindow } = elements;
+  const {
+    input, feedbackEl, feedSection, postSection, modalWindow,
+  } = elements;
   const { valid } = state;
   switch (path) {
     case 'process.processState': {

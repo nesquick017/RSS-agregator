@@ -40,7 +40,9 @@ export default () => {
       const feedbackEl = document.querySelector('.feedback');
       const rssForm = document.querySelector('.rss-form');
       const input = rssForm.querySelector('#url-input');
-      const elements = { input, feedbackEl, feedSection, postSection, modalWindow };
+      const elements = {
+        input, feedbackEl, feedSection, postSection, modalWindow,
+      };
 
       const getAxiosResponse = (url) => {
         const allOrigins = 'https://allorigins.hexlet.app/get';
@@ -51,7 +53,8 @@ export default () => {
       };
 
       const validate = (url, urlList) => {
-        const schema = yup.string().trim().required().url().notOneOf(urlList);
+        const schema = yup.string().trim().required().url()
+          .notOneOf(urlList);
         return schema.validate(url);
       };
 
@@ -74,8 +77,7 @@ export default () => {
               createPosts(state, newPosts, feedId);
             }
             return Promise.resolve();
-          }),
-        );
+          }));
 
         Promise.allSettled(promises).finally(() => {
           setTimeout(() => getNewPosts(state), 5000);
@@ -83,8 +85,7 @@ export default () => {
       };
 
       const watchedState = onChange(initialState, (path, value) =>
-        render(elements, initialState, i18nextInstance, path, value),
-      );
+        render(elements, initialState, i18nextInstance, path, value));
       getNewPosts(watchedState);
 
       yup.setLocale({
