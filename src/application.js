@@ -32,6 +32,7 @@ export default () => {
         },
         uiState: {
           visitedLinksIds: new Set(),
+          modalId: '',
         },
       };
 
@@ -123,11 +124,16 @@ export default () => {
             watchedState.process.processState = 'finished';
           });
       });
-
       postSection.addEventListener('click', (e) => {
         const id = e.target.getAttribute('data-id');
         if (id) {
-          watchedState.uiState.visitedLinksIds.add(id);
+          const isButton = e.target.tagName === 'BUTTON';
+          if (isButton) {
+            watchedState.uiState.modalId = id;
+            watchedState.uiState.visitedLinksIds.add(id);
+          } else {
+            watchedState.uiState.visitedLinksIds.add(id);
+          }
         }
       });
     });

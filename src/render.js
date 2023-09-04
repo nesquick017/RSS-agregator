@@ -1,9 +1,7 @@
-const renderPosts = (state, modalWindow) => {
+const renderPosts = (state) => {
   const { posts } = state.content;
   const content = posts.map((post) => {
-    const {
-      title, link, description, id,
-    } = post;
+    const { title, link, id } = post;
 
     const newPost = document.createElement('li');
     newPost.classList.add(
@@ -30,17 +28,6 @@ const renderPosts = (state, modalWindow) => {
     newPostButton.setAttribute('data-bs-toggle', 'modal');
     newPostButton.setAttribute('data-bs-target', '#modal');
     newPostButton.textContent = 'Просмотр';
-    newPostButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      const modalHeader = modalWindow.querySelector('.modal-header');
-      modalHeader.textContent = title;
-
-      const modalBody = modalWindow.querySelector('.modal-body');
-      modalBody.textContent = description;
-
-      const readMoreButton = modalWindow.querySelector('.full-article');
-      readMoreButton.setAttribute('href', link);
-    });
 
     newPost.append(newPostLink, newPostButton);
     return newPost;
@@ -156,6 +143,20 @@ export default (elements, state, i18nextInstance, path) => {
       break;
     }
     case 'process.value': {
+      break;
+    }
+    case 'uiState.modalId': {
+      const { modalId } = state.uiState;
+      const activePost = state.content.posts.find(({ id }) => id === modalId);
+      const { title, description, link } = activePost;
+      const modalHeader = modalWindow.querySelector('.modal-header');
+      modalHeader.textContent = title;
+
+      const modalBody = modalWindow.querySelector('.modal-body');
+      modalBody.textContent = description;
+
+      const readMoreButton = modalWindow.querySelector('.full-article');
+      readMoreButton.setAttribute('href', link);
       break;
     }
     default: {
