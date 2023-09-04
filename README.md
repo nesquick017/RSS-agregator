@@ -8,8 +8,13 @@ Please do clone this repository and install Dependencies.
 You could as well use the command below:
 
 ```
-make install
 npm run build
+```
+
+or 
+
+```
+yarn build
 ```
 
 This is **[vercel link](https://frontend-project-11-chi-lilac.vercel.app)** to project.
